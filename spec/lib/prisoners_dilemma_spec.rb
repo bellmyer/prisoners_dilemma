@@ -5,20 +5,26 @@ describe PrisonersDilemma do
 
   let(:prisoner1) { Prisoner.new }
   let(:prisoner2) { Prisoner.new }
-  let(:turns) { 5 }
+  let(:max_years) { 80 }
   
-  describe "opponents" do
-    subject { target.new(prisoner1, prisoner2, turns).opponents }
-    
-    it { should be_an(Array) }
-    specify { subject.size.should == 2 }
+  describe "initialization" do
+    describe "#opponents" do
+      subject { target.new(prisoner1, prisoner2, max_years).opponents }
 
-    it { should include(prisoner1) }
-    it { should include(prisoner2) }
+      it { should be_an(Array) }
+      specify { subject.size.should == 2 }
+
+      it { should include(prisoner1) }
+      it { should include(prisoner2) }
+    end
+
+    describe "#max_years" do
+      subject { target.new(prisoner1, prisoner2, max_years).max_years }
+      it { should == max_years }
+    end
   end
   
-  describe "turn_count" do
-    subject { target.new(prisoner1, prisoner2, turns).turn_count }
-    it { should == turns }
+  describe "#play" do
+    
   end
 end
