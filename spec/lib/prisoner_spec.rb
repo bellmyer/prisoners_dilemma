@@ -1,5 +1,4 @@
 require_relative '../spec_helper'
-require_relative '../../lib/prisoner'
 
 describe Prisoner do
   let(:target) { Prisoner }
