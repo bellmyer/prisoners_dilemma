@@ -1,27 +1,61 @@
 require_relative 'prisoner'
 
 class PrisonersDilemma
-  attr_accessor :players, :max_years, :moves
+  attr_accessor :players, :turns, :moves, :turn_count
+
+  class << self
+    def run prisoners, options = {}
+      new(prisoners, options).play
+    end
+  end
   
   def initialize prisoners, options = {}
-    config = {:max_years => 100}.merge(options)
+    config = {:turns => 25}.merge(options)
     
     self.players = prisoners.map{ |prisoner| Player.new(prisoner) }
-    self.max_years = config[:max_years]
+    self.turns = config[:turns]
+    self.turn_count = 0
+    
+    announce_players
   end
   
   def turn
+    self.turn_count += 1
     self.moves = players.map(&:move)
 
     notify_player_moves
+    announce_player_moves
     
     return unless moves_valid?
     
     calculate_scores
+    scores
+  end
+  
+  def announce_players
+    puts players.map(&:nickname).join(' vs ')
+  end
+  
+  def announce_player_moves
+    puts moves.map(&:to_s).join(', ')
+  end
+  
+  def scores
+    players.map(&:score)
+  end
+  
+  def play
+    turn until game_over?
+    players.map(&:score)
+  end
+  
+  def reset
+    players.each { |player| player.score = 0 }
+    self.turn_count = 0
   end
   
   def game_over?
-    players.any?{ |player| player.score >= max_years }
+    turn_count >= turns
   end
   
   private
@@ -57,10 +91,10 @@ class PrisonersDilemma
   end
   
   def moves_valid?
-    players[0].score += max_years if invalid_move?(moves[0])
-    players[1].score += max_years if invalid_move?(moves[1])
+    players[0].score += turns if invalid_move?(moves[0])
+    players[1].score += turns if invalid_move?(moves[1])
       
-    !players.map(&:score).any?{ |score| score >= max_years }
+    !players.map(&:score).any?{ |score| score >= turns }
   end
   
   def invalid_move? move

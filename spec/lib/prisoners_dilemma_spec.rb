@@ -4,14 +4,16 @@ describe PrisonersDilemma do
   let(:target) { PrisonersDilemma }
 
   let(:game) { target.new([prisoner1, prisoner2]) }
-  let(:game_with_max_years) { target.new([prisoner1, prisoner2], :max_years => max_years) }
+  let(:game_with_turns) { target.new([prisoner1, prisoner2], :turns => turns) }
   
   let(:prisoner1) { Prisoner.new }
   let(:prisoner2) { Prisoner.new }
-  let(:max_years) { 80 }
-  let(:default_max_years) { 100 }
+  let(:turns) { 80 }
+  let(:default_turns) { 25 }
   
   describe "initialization" do
+    before { target.any_instance.expects(:announce_players) }
+    
     describe "players/prisoners" do
       subject { game.players.map(&:prisoner) }
 
@@ -22,23 +24,54 @@ describe PrisonersDilemma do
       it { should include(prisoner2) }
     end
 
-    describe "max_years" do
+    describe "turns" do
       describe "when not specified" do
-        subject { game.max_years }
-        it { should == default_max_years }
+        subject { game.turns }
+        it { should == default_turns }
       end
       
       describe "when specified" do
-        subject { game_with_max_years.max_years }
-        it { should == max_years }
+        subject { game_with_turns.turns }
+        it { should == turns }
       end
+    end
+    
+    describe "turn_count" do
+      subject { game.turn_count }
+      it { should == 0 }
+    end
+  end
+  
+  describe "#announce_players" do
+    it "prints the announcement" do
+      $stdout.expects(:puts).with("Prisoner vs Prisoner")
+      game
+    end
+  end
+  
+  describe "announce_player_moves" do
+    let(:move1) { :betray }
+    let(:move2) { :cooperate }
+    
+    before do
+      target.any_instance.stubs(:announce_players)
+      game.stubs(:moves).returns([move1, move2])
+    end
+    
+    it "prints the players' moves" do
+      $stdout.expects(:puts).with("#{move1}, #{move2}")
+      game.announce_player_moves
     end
   end
   
   describe "#turn" do
-    let(:max_years) { default_max_years }
+    let(:turns) { default_turns }
     
     before do
+      target.any_instance.stubs(:announce_players)
+      
+      game.expects(:announce_player_moves)
+      
       prisoner1.expects(:move).returns(prisoner1_move)
       prisoner2.expects(:move).returns(prisoner2_move)
       
@@ -50,7 +83,7 @@ describe PrisonersDilemma do
     
     describe "when player1 cooperates" do
       let(:prisoner1_move) { :cooperate }
-      
+
       describe "and player2 cooperates" do
         let(:prisoner2_move) { :cooperate }
 
@@ -88,7 +121,7 @@ describe PrisonersDilemma do
       let(:prisoner1_move) { :nonsense }
       let(:prisoner2_move) { :cooperate }
       
-      specify { game.players[0].score.should == max_years }
+      specify { game.players[0].score.should == turns }
       specify { game.players[1].score.should == 0 }
     end
     
@@ -97,58 +130,77 @@ describe PrisonersDilemma do
       let(:prisoner2_move) { :nonsense }
       
       specify { game.players[0].score.should == 0 }
-      specify { game.players[1].score.should == max_years }
+      specify { game.players[1].score.should == turns }
     end
     
     describe "when both players returna n invalid move" do
       let(:prisoner1_move) { :nonsense }
       let(:prisoner2_move) { :nonsense }
       
-      specify { game.players[0].score.should == max_years }
-      specify { game.players[1].score.should == max_years }
+      specify { game.players[0].score.should == turns }
+      specify { game.players[1].score.should == turns }
     end
   end
   
   describe "#game_over?" do
-    let(:max_years) { default_max_years }
+    let(:turns) { default_turns }
     
     subject { game.game_over? }
     
     before do
-      game.players[0].stubs(:score).returns(score1)
-      game.players[1].stubs(:score).returns(score2)
+      target.any_instance.stubs(:announce_players)
+      game.stubs(:announce_player_moves)
+      
+      turn_count.times { game.turn }
     end
     
-    describe "when neither player has reached max years" do
-      let(:score1) { max_years - 1 }
-      let(:score2) { max_years - 1 }
-      
+    describe "when the number of max turns has not been reached" do
+      let(:turn_count) { turns - 1 }
       it { should be_false }
     end
     
-    describe "when player1 has reached max years" do
-      let(:score1) { max_years }
-      let(:score2) { max_years - 1 }
-      
+    describe "when number of max turns has been reached" do
+      let(:turn_count) { turns }
       it { should be_true }
     end
     
-    describe "when player2 has reached max years" do
-      let(:score1) { max_years - 1 }
-      let(:score2) { max_years }
-      
-      it { should be_true }
-    end
-    
-    describe "when both players have reached max years" do
-      let(:score1) { max_years }
-      let(:score2) { max_years }
-      
+    describe "when number of max turns has been exceeded" do
+      let(:turn_count) { turns + 1 }
       it { should be_true }
     end
   end
   
-  describe "play" do
+  describe "#play" do
     
+  end
+  
+  describe "#reset" do
+    before do
+      target.any_instance.stubs(:announce_players)
+      game.stubs(:announce_player_moves)
+      
+      2.times { game.turn }
+      game.reset
+    end
+    
+    specify { game.players[0].score.should == 0 }
+    specify { game.players[1].score.should == 0 }
+    specify { game.turn_count.should == 0 }
+  end
+  
+  describe "scores" do
+    let(:score1) { 11 }
+    let(:score2) { 22 }
+    
+    subject { game.scores }
+    
+    before do
+      target.any_instance.stubs(:announce_players)
+      
+      game.players[0].score = score1
+      game.players[1].score = score2
+    end
+    
+    it { should == [score1, score2] }
   end
 end

@@ -14,4 +14,8 @@ class Player
   def opponent_move= opponent_move
     prisoner.opponent_move = opponent_move
   end
+  
+  def nickname
+    prisoner.class.nickname
+  end
 end

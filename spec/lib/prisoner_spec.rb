@@ -11,11 +11,16 @@ describe Prisoner do
     end
   end
   
-  describe "move" do
+  describe "#move" do
     subject { target.new.move }
     
     it "should be either :cooperate or :betray" do
       [:cooperate, :betray].should include(subject)
     end
+  end
+  
+  describe "::name" do
+    subject { target.nickname }
+    it { should == 'Prisoner' }
   end
 end

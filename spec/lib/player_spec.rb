@@ -31,4 +31,12 @@ describe Player do
       player.opponent_move = :cooperate
     end
   end
+  
+  describe "#name" do
+    let(:nickname) { 'bob' }
+    it "calls prisoner's class nickname" do
+      prisoner.class.expects(:nickname).returns(nickname)
+      player.nickname.should == nickname
+    end
+  end
 end
