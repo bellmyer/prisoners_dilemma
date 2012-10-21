@@ -91,13 +91,12 @@ class PrisonersDilemma
   end
   
   def moves_valid?
-    players[0].score += turns if invalid_move?(moves[0])
-    players[1].score += turns if invalid_move?(moves[1])
-      
-    !players.map(&:score).any?{ |score| score >= turns }
+    !moves.any?{ |move| invalid_move?(move) }
   end
   
   def invalid_move? move
     ![:cooperate, :betray].include?(move)
   end
 end
+
+PD = PrisonersDilemma

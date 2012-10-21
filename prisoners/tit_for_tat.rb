@@ -11,3 +11,5 @@ class TitForTat < Prisoner
     opponent_move || :cooperate
   end
 end
+
+TitForTat
