@@ -1,4 +1,4 @@
-require_relative '../lib/prisoner'
+require_relative '../../lib/prisoner'
 
 module Sample
   class Vindictive < Prisoner

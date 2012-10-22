@@ -2,15 +2,17 @@ require_relative 'prisoner'
 
 class PrisonersDilemma
   attr_accessor :players, :turns, :moves, :turn_count
+  
+  PENALTY = 10
 
   class << self
-    def run prisoners, options = {}
-      new(prisoners, options).play
+    def run prisoner_classes, options = {}
+      new(prisoner_classes.map(&:new), options).play
     end
   end
   
   def initialize prisoners, options = {}
-    config = {:turns => 25}.merge(options)
+    config = {:turns => 100}.merge(options)
     
     self.players = prisoners.map{ |prisoner| Player.new(prisoner) }
     self.turns = config[:turns]
@@ -26,7 +28,10 @@ class PrisonersDilemma
     notify_player_moves
     announce_player_moves
     
-    return unless moves_valid?
+    unless moves_valid?
+      penalize
+      return
+    end
     
     calculate_scores
     scores
@@ -59,6 +64,10 @@ class PrisonersDilemma
   end
   
   private
+  
+  def penalize
+    set_scores PENALTY, PENALTY
+  end
   
   def calculate_scores
     if all_cooperated?

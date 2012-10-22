@@ -9,7 +9,7 @@ describe PrisonersDilemma do
   let(:prisoner1) { Prisoner.new }
   let(:prisoner2) { Prisoner.new }
   let(:turns) { 80 }
-  let(:default_turns) { 25 }
+  let(:default_turns) { 100 }
   
   describe "initialization" do
     before { target.any_instance.expects(:announce_players) }
@@ -121,24 +121,24 @@ describe PrisonersDilemma do
       let(:prisoner1_move) { :nonsense }
       let(:prisoner2_move) { :cooperate }
       
-      specify { game.players[0].score.should == turns }
-      specify { game.players[1].score.should == 0 }
+      specify { game.players[0].score.should == target::PENALTY }
+      specify { game.players[1].score.should == target::PENALTY }
     end
     
     describe "when player2 returns an invalid move" do
       let(:prisoner1_move) { :cooperate }
       let(:prisoner2_move) { :nonsense }
       
-      specify { game.players[0].score.should == 0 }
-      specify { game.players[1].score.should == turns }
+      specify { game.players[0].score.should == target::PENALTY }
+      specify { game.players[1].score.should == target::PENALTY }
     end
     
     describe "when both players returna n invalid move" do
       let(:prisoner1_move) { :nonsense }
       let(:prisoner2_move) { :nonsense }
       
-      specify { game.players[0].score.should == turns }
-      specify { game.players[1].score.should == turns }
+      specify { game.players[0].score.should == target::PENALTY }
+      specify { game.players[1].score.should == target::PENALTY }
     end
   end
   
