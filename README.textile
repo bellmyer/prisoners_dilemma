@@ -37,8 +37,9 @@ Finally, here are my suggested guidelines for a tournament:
 * each team can contribute up to five player classes that will all join the round-robin play.
 * each team submits the number of turns that constitute a match, and the median number is used for all matches.
 * since the tournament takes only seconds to run, consider adding 30 minute breaks to allow developers to tweak their players, then rematch.  Repeat as desired.
+* each player will play a copy of themselves.
 
-h2. How to Play
+h2. Creating Players
 
 Create a team directory in the _prisoners_ directory.  Your player classes will live here. Namespace your classes with your team name so they don't overlap with anyone else's.
 
@@ -86,6 +87,39 @@ end
 </pre>
 
 It stores only the last move of its opponent, so it's a pretty simple class. Many strategies can be implemented with very basic Ruby.
+
+h2. Playing a Tournament
+
+A sample _round_robin.rb_ file is included, which will pit all players against each other and spit out their scores (remember lower is better) in winning order.
+
+Use the PD class directly to gain more control over your play. This is the class that will pit a player
+against an opponent. The PD class has a _::run_ method which streamlines play. It accepts two arguments - 
+an array of two player classes, and a hash of options.
+
+There is also a helper script _helper.rb_ which loads all concerned classes in one swoop.
+
+*Examples*
+
+<pre>
+# Load all classes, including all player classes
+require './helper'
+
+# Run a verbose, 50-turn battle between the sample classes TitForTat and Cooperator
+PD.run([Sample::TitForTat, Sample::Cooperator])
+
+# Run a quieter battle that only outputs the final scores:
+PD.run([Sample::TitForTat, Sample::Cooperator], :verbose => false)
+
+# Run a shorter battle with only 20 turns:
+PD.run([Sample::TitForTat, Sample::Cooperator], :turns => 20)
+</pre>
+
+Because the Prisoner parent class file requires the _facets_ gem, you can use it to easily get a list of all the player classes:
+
+<pre>
+Prisoner.subclasses
+  # => [Sample::Betrayer, Sample::Cooperator, Sample::Randomish, Sample::TitForTat, Sample::Vindictive]
+</pre>
 
 h2. Questions
 

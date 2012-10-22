@@ -1,3 +1,5 @@
+require 'facets'
+
 class Prisoner
   class << self
     def nickname

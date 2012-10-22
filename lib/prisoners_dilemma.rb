@@ -4,6 +4,7 @@ class PrisonersDilemma
   attr_accessor :players, :turns, :verbose, :moves, :turn_count
   
   PENALTY = 10
+  DEFAULT_TURNS = 50
 
   class << self
     def run prisoner_classes, options = {}
@@ -12,7 +13,7 @@ class PrisonersDilemma
   end
   
   def initialize prisoners, options = {}
-    defaults = {:turns => 100, :verbose => true}
+    defaults = {:turns => DEFAULT_TURNS, :verbose => true}
     config = defaults.merge(options)
     
     self.players = prisoners.map{ |prisoner| Player.new(prisoner) }

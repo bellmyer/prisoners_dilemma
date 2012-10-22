@@ -9,7 +9,7 @@ describe PrisonersDilemma do
   let(:prisoner1) { Prisoner.new }
   let(:prisoner2) { Prisoner.new }
   let(:turns) { 80 }
-  let(:default_turns) { 100 }
+  let(:default_turns) { 50 }
   
   describe "initialization" do
     before { target.any_instance.expects(:announce_players) }
