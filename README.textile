@@ -1,0 +1,135 @@
+h1. Prisoner's Dilemma
+
+This is a strategy game based on the classic Prisoner's Dilemma.  In the 
+classic game, two players must decide independently whether to cooperate with
+or betray the other player as they attempt to spend the least amount of time
+in jail.  In this game, all the decisions are made by one or more Prisoner
+classes that you code beforehand in Ruby.
+
+This codebase defines the game class (PrisonersDilemma, aliased to PD) as well
+as a parent Prisoner class from which all user-created player classes must 
+inherit. The game can be played against the sample prisoner classes provided,
+against players created by fellow rubyists, or even against other players
+you have created yourself.  The game is the most rewarding with a mix of all
+three.
+
+A round_robin.rb script is provided as well, that will load all player classes
+contained in the _prisoners_ folder.
+
+h2. The Premise
+
+You and a partner in crime are being interrogated by the authorities, who have
+_some_ evidence.  
+
+If you both cooperate, by not confessing, you each get a short prison sentence 
+because the authorities could not build a strong case.
+
+If you both betray each other by confessing, you discredit each other and you 
+each get a longer sentence.
+
+If one of you cooperates but the other betrays, the betrayer goes free (no
+prison sentence at all) while the cooperator gets a very long sentence.
+
+Essentially, how much do you trust your partner?  If you're concerned with
+everybody spending as few years behind bars as possible, it's in your best
+interest to cooperate.  But if you think your partner will cooperate, you
+might want to betray him instead and get off scott free.  And if you think
+your partner is going to cave to the authorities, you're better off betraying
+them as well.
+
+In this game, you control your own decision, while somebody else controls your
+partner's decision.  Neither of you will know each other's decision until
+afterward.  The game is played in several turns, so you can see how your 
+partner is behaving and act accordingly.
+
+
+h2. Rules of the Game
+
+The goal is to end up with the fewest years in prison, over several turns. The 
+game closely (but not completely) follows Robert Axelrod's original 1984
+experiment:
+
+* if you and your partner cooperate, you each get 2 years.
+* if you both betray each other, you each get 4 years.
+* if one cooperates and the other betrays, the betrayer gets 0 years, and the cooperator gets 5 years.
+
+There are a couple details that are different from the original:
+
+* if either player submits a move other than "cooperate" or "betray", both get 10 years.  This is equivalent to an "I'll see you in hell" strategy, informing the police of other crimes you and your partner have committed and severly harming both of you in the process.
+* your player class will be informed of your partner's move after every turn, so your player's "memory" can be infinite. I believe in the original, you were only allowed to "remember" the most recent three moves of your partner.
+
+Finally, here are my suggested guidelines for a tournament:
+
+* each team can contribute up to five player classes that will all join the round-robin play.
+* each team submits the number of turns that constitute a match, and the median number is used for all matches.
+* since the tournament takes only seconds to run, consider adding 30 minute breaks to allow developers to tweak their players, then rematch.  Repeat as desired.
+
+h2. How to Play
+
+Create a team directory in the _prisoners_ directory.  Your player classes will
+live here.Namespace your classes with your team name so they don't overlap
+with anyone else's.
+
+So if your team name is SuperAwesome and you have a player class Default, it might
+look like this:
+
+@prisoners/super_awesome/default.rb@
+
+<pre>
+require_relative '../../lib/prisoner'
+
+module SuperAwesome
+  class Default < Prisoner
+  end
+end
+</pre>
+
+Since this class does nothing except inherit from the parent class, it will
+disregard its opponent's moves, and simply cooperate every time.
+
+Your class can contain as much code as you'd like, but there are only two
+instance methods that the PD class requires: @#move@ and @#opponent_move=@.  
+
+The @#move@ method should return your move, as a symbol.  It can be _:cooperate_,
+or _:betray_.  Anything else will result in both your player and your opponent
+being penalized.
+
+The @#opponent_move=@ method should accept one argument, which will be your
+opponent's move.  You can ignore it, or store it use it as the basis for your
+future decisions.
+
+Here's an example of the classic strategy _Tit for Tat_, which starts out by
+cooperating and then mimics the opponent's last move every turn thereafter.
+It's one of the included sample prisoner classes:
+
+@prisoners/sample/tit_for_tat.rb@
+
+<pre>
+require_relative '../../lib/prisoner'
+
+module Sample
+  class TitForTat < Prisoner
+    attr_reader :opponent_move
+  
+    def opponent_move= opponent_move
+      @opponent_move = opponent_move
+    end
+  
+    def move
+      opponent_move || :cooperate
+    end
+  end
+end
+</pre>
+
+It stores only the last move of its opponent, so it's a pretty simple class.
+Many strategies can be implemented with very basic Ruby.
+
+h2. Questions
+
+*Should player classes also gain access to their opponent's class?*
+
+This would provide an advanced level of game play where your class could create
+an opponent object and test out various strategies before making a move.  Of
+course, this would have to be done programmatically in real time which is what
+makes it such a great challenge.
