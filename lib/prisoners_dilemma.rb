@@ -1,7 +1,7 @@
 require_relative 'prisoner'
 
 class PrisonersDilemma
-  attr_accessor :players, :turns, :moves, :turn_count
+  attr_accessor :players, :turns, :verbose, :moves, :turn_count
   
   PENALTY = 10
 
@@ -12,10 +12,12 @@ class PrisonersDilemma
   end
   
   def initialize prisoners, options = {}
-    config = {:turns => 100}.merge(options)
+    defaults = {:turns => 100, :verbose => true}
+    config = defaults.merge(options)
     
     self.players = prisoners.map{ |prisoner| Player.new(prisoner) }
     self.turns = config[:turns]
+    self.verbose = config[:verbose]
     self.turn_count = 0
     
     announce_players
@@ -38,7 +40,7 @@ class PrisonersDilemma
   end
   
   def announce_players
-    puts players.map(&:nickname).join(' vs ')
+    puts "\n" + players.map(&:nickname).join(' vs ')
   end
   
   def announce_player_moves

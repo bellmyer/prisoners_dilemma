@@ -3,8 +3,8 @@ require_relative '../spec_helper'
 describe PrisonersDilemma do
   let(:target) { PrisonersDilemma }
 
-  let(:game) { target.new([prisoner1, prisoner2]) }
-  let(:game_with_turns) { target.new([prisoner1, prisoner2], :turns => turns) }
+  let(:game) { target.new([prisoner1, prisoner2], options) }
+  let(:options) { {} }
   
   let(:prisoner1) { Prisoner.new }
   let(:prisoner2) { Prisoner.new }
@@ -25,13 +25,14 @@ describe PrisonersDilemma do
     end
 
     describe "turns" do
+      subject { game.turns }
+
       describe "when not specified" do
-        subject { game.turns }
         it { should == default_turns }
       end
       
       describe "when specified" do
-        subject { game_with_turns.turns }
+        let(:options) { {:turns => turns} }
         it { should == turns }
       end
     end
@@ -40,11 +41,24 @@ describe PrisonersDilemma do
       subject { game.turn_count }
       it { should == 0 }
     end
+    
+    describe "verbose" do
+      subject { game.verbose }
+
+      describe "when not specified" do
+        it { should be_true }
+      end
+      
+      describe "when specified" do
+        let(:options) { {:verbose => false} }
+        it { should be_false }
+      end
+    end
   end
   
   describe "#announce_players" do
     it "prints the announcement" do
-      $stdout.expects(:puts).with("Prisoner vs Prisoner")
+      $stdout.expects(:puts).with("\nPrisoner vs Prisoner")
       game
     end
   end
