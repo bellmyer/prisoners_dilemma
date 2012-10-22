@@ -40,11 +40,11 @@ class PrisonersDilemma
   end
   
   def announce_players
-    puts "\n" + players.map(&:nickname).join(' vs ')
+    puts "\n" + players.map(&:nickname).join(' vs ') if verbose
   end
   
   def announce_player_moves
-    puts moves.map(&:to_s).join(', ')
+    puts moves.map(&:to_s).join(', ') if verbose
   end
   
   def scores

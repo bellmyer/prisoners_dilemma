@@ -57,9 +57,22 @@ describe PrisonersDilemma do
   end
   
   describe "#announce_players" do
-    it "prints the announcement" do
-      $stdout.expects(:puts).with("\nPrisoner vs Prisoner")
-      game
+    describe "when verbose mode is on" do
+      let(:options) { {:verbose => true} }
+
+      it "prints the announcement" do
+        $stdout.expects(:puts).with("\nPrisoner vs Prisoner")
+        game
+      end
+    end
+    
+    describe "when verbose mode is off" do
+      let(:options) { {:verbose => false} }
+
+      it "does NOT print the announcement" do
+        $stdout.expects(:puts).with("\nPrisoner vs Prisoner").never
+        game
+      end
     end
   end
   
@@ -72,9 +85,22 @@ describe PrisonersDilemma do
       game.stubs(:moves).returns([move1, move2])
     end
     
-    it "prints the players' moves" do
-      $stdout.expects(:puts).with("#{move1}, #{move2}")
-      game.announce_player_moves
+    describe "when verbose mode is on" do
+      let(:options) { {:verbose => true} }
+    
+      it "prints the players' moves" do
+        $stdout.expects(:puts).with("#{move1}, #{move2}")
+        game.announce_player_moves
+      end
+    end
+    
+    describe "when verbose mode is off" do
+      let(:options) { {:verbose => false} }
+    
+      it "does NOT print the players' moves" do
+        $stdout.expects(:puts).with("#{move1}, #{move2}").never
+        game.announce_player_moves
+      end
     end
   end
   
