@@ -64,6 +64,8 @@ The @#move@ method should return your move, as a symbol.  It can be _:cooperate_
 
 The @#opponent_move=@ method should accept one argument, which will be your opponent's move.  You can ignore it, or store it use it as the basis for your future decisions.
 
+There is also a class method @::nickname@ that you can set to be the nickname of your class.  This will show up when your player is mentioned in verbose game output. By default, it's just your class name.
+
 Here's an example of the classic strategy _Tit for Tat_, which starts out by cooperating and then mimics the opponent's last move every turn thereafter. It's one of the included sample prisoner classes:
 
 @prisoners/sample/tit_for_tat.rb@
