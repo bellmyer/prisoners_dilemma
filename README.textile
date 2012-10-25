@@ -94,9 +94,7 @@ h2. Playing a Tournament
 
 A sample _round_robin.rb_ file is included, which will pit all players against each other and spit out their scores (remember lower is better) in winning order.
 
-Use the PD class directly to gain more control over your play. This is the class that will pit a player
-against an opponent. The PD class has a _::run_ method which streamlines play. It accepts two arguments - 
-an array of two player classes, and a hash of options.
+Use the PD class directly to gain more control over your play. This is the class that will pit a player against an opponent. The PD class has a _::run_ method which streamlines play. It accepts two arguments - an array of two player classes, and a hash of options.
 
 There is also a helper script _helper.rb_ which loads all concerned classes in one swoop.
 
